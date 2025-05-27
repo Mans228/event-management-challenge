@@ -15,6 +15,23 @@ public class User {
     @NotBlank
     @Email
     private String email;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
