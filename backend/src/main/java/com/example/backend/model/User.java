@@ -18,4 +18,21 @@ public class User {
         this.email = email;
         this.role = role;
     }
+    public User() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
 }
