@@ -11,4 +11,6 @@ public class User {
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
 }
