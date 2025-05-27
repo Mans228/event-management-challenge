@@ -15,15 +15,7 @@ Wichtigste Architektur Entscheidungen:
   * Service Layer: Business Logic
   * Repository Layer: Zugriff auf die Datenbank mit Spring Data JPA
   * Model Layer: Entity Definition
+* MySQL DB in Container -> schneller und einfacher in der Verwendung und leichter beim Setup für den Nutzer
 
-Theoretische Fragen:
-- @OneToMany bedeutet, dass eine Entity mit vielen Anderen verknüpft werden kann. In unserem Beispiel kann ein User mehrere Events haben
-- @ManyToOne bedeutet umgekehrt, dass viele Entities auf ein eine gemeinsame Entity verweisen. In unserem Beispiel können viele Events denselben User als Organisator haben
-- @Controller:
-  Wird in traditionellen Webanwendungen verwendet, um Views (z. B. Thymeleaf, JSP) zurückzugeben.
-- @RestController:
-  Kombination aus @Controller + @ResponseBody. Wird verwendet für REST-APIs, gibt direkt JSON zurück.
 
-- Wie würdest du die Performance deiner App messen? Im Backend könnte man Prometheus+Grafana anwenden
-- Wie würdest du das Testing der App verbessern, wenn du mehr Zeit investieren
-  würdest ? Mehr Integrationstests, MockMvc mit Testcontainers, um echte DB zu simulieren
+Flutter App wurde aus Zeitgründen und fehlender Flutter Kenntnissen nicht abgeschlossen. Fokus lag auf der Backend-Architektur und Tests.
