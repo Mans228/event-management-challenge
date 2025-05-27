@@ -9,5 +9,8 @@ import java.util.List;
 @Repository
 public interface EventRegistrationRepository extends JpaRepository<EventRegistration,Long> {
     List<EventRegistration> findByUserId(Long userId);
+    int countByEventId(Long eventId);
+    boolean existsByUserIdAndEventId(Long userId, Long eventId);
+
 
 }
