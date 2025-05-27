@@ -43,10 +43,10 @@ public class EventRegistrationService {
 
     public void registerUserToEvent(Long userId, Long eventId) {
         User user = userService.getUserById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found")); //If User doesnt exist
 
         Event event = eventService.getEventById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Event not found")); //If event doesnt exist
 
         // Count current registrations
         int currentRegistrations = eventRegistrationRepository.countByEventId(eventId);
@@ -54,7 +54,7 @@ public class EventRegistrationService {
             throw new IllegalStateException("Event has reached max participants");
         }
 
-        // Optional: Prevent duplicate registration
+        // Prevent duplicate registration
         boolean alreadyRegistered = eventRegistrationRepository.existsByUserIdAndEventId(userId, eventId);
         if (alreadyRegistered) {
             throw new IllegalStateException("User is already registered for this event");
