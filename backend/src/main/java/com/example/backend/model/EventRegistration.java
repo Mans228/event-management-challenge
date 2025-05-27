@@ -1,6 +1,7 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 @Entity
@@ -8,12 +9,15 @@ public class EventRegistration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
+    @NotNull
     private LocalDate registrationDate;
     public EventRegistration(){
 

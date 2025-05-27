@@ -1,6 +1,7 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -9,11 +10,24 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Title is required")
+
     private String title;
+    @Size(max = 500, message = "Description is too long")
+
     private String description;
+
+    @NotNull(message = "Date is required")
+    @FutureOrPresent(message = "Date must be today or in the future")
     private LocalDate date;
+    @NotBlank(message = "Location is required")
+
     private String location;
+    @Min(value = 1, message = "Max participants must be at least 1")
+
     private int maxParticipants;
+    @NotNull(message = "Organizer must be specified")
+
     @ManyToOne
     @JoinColumn(name = "organizer_id")
     private User organizer;
