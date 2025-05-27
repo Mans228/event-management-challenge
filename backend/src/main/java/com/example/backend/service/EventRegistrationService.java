@@ -19,10 +19,8 @@ public class EventRegistrationService {
     public EventRegistration saveEventRegistration(EventRegistration eventRegistration){
         return eventRegistrationRepository.save(eventRegistration);
     }
-    public Iterable<EventRegistration> getAllEventRegistrations() {
-        List<EventRegistration> eventRegistrations = new ArrayList<>();
-        eventRegistrationRepository.findAll().forEach(eventRegistrations::add);
-        return eventRegistrations;
+    public List<EventRegistration> getAllEventRegistrations() {
+        return eventRegistrationRepository.findAll();
     }
     public EventRegistration getEventRegistrationById(Long id) {
         return eventRegistrationRepository.findById(id).orElse(null);
@@ -30,6 +28,9 @@ public class EventRegistrationService {
 
     public void deleteEventRegistrationById(Long id) {
         eventRegistrationRepository.deleteById(id);
+    }
+    public List<EventRegistration> getEventRegistrationsOfUser(Long id){
+        return eventRegistrationRepository.findByUserId(id);
     }
 
 }

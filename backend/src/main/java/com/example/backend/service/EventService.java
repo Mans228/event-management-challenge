@@ -20,9 +20,7 @@ public class EventService {
         return eventRepository.save(event);
     }
     public List<Event> getAllEvents() {
-        List<Event> events = new ArrayList<>();
-        eventRepository.findAll().forEach(events::add);
-        return events;
+        return eventRepository.findAll();
     }
     public Event getEventById(Long id) {
         return eventRepository.findById(id).orElse(null);
