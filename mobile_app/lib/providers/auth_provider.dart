@@ -1,21 +1,42 @@
 import 'package:flutter/material.dart';
+import '../models/user.dart';
+import '../services/api_service.dart';
 
 class AuthProvider with ChangeNotifier {
+  final ApiService _apiService;
+  User? _currentUser;
   bool _isLoading = false;
+
+  AuthProvider(this._apiService);
+
+  User? get currentUser => _currentUser;
+  bool get isAuthenticated => _currentUser != null;
   bool get isLoading => _isLoading;
 
-  bool _isLogin = true;
-  bool get isLogin => _isLogin;
-
-  void toggleFormMode() {
-    _isLogin = !_isLogin;
+  Future<void> register(String email, String username) async {
+    _currentUser = await _apiService.register(email, username);
     notifyListeners();
   }
 
-  void setLoading(bool loading) {
-    _isLoading = loading;
+  Future<void> login(int userId) async {
+    _currentUser = await _apiService.login(userId);
     notifyListeners();
   }
 
-// Add login and register logic later
+  void logout() {
+    _currentUser = null;
+    notifyListeners();
+  }
+
+  Future<void> refreshUserProfile() async {
+    if (!isAuthenticated) return;
+
+    try {
+      _currentUser = await _apiService.getCurrentUser();
+      notifyListeners();
+    } catch (e) {
+      // Handle error or token expiration
+      logout();
+    }
+  }
 }

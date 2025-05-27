@@ -11,87 +11,143 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _email = '';
-  String _username = '';
-  String _password = '';
+  final _emailController = TextEditingController();
+  final _userIdController = TextEditingController();
+  final _usernameController = TextEditingController();
+  bool _isLogin = true;
 
-  void _submit(AuthProvider authProvider) {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState!.save();
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _userIdController.dispose();
+    _usernameController.dispose();
+    super.dispose();
+  }
 
-      authProvider.setLoading(true);
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      // Simulate network delay
-      Future.delayed(const Duration(seconds: 2), () {
-        authProvider.setLoading(false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(authProvider.isLogin
-                ? 'Logged in as $_username'
-                : 'Registered as $_username'),
-          ),
+    try {
+      if (_isLogin) {
+        final userId = int.tryParse(_userIdController.text);
+        if (userId == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please enter a valid user ID')),
+          );
+          return;
+        }
+        await authProvider.login(userId);
+      } else {
+        await authProvider.register(
+          _emailController.text,
+          _usernameController.text,
         );
-      });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(authProvider.isLogin ? 'Login' : 'Register'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              if (!authProvider.isLogin)
-                TextFormField(
-                  key: const ValueKey('email'),
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                  value != null && value.contains('@') ? null : 'Invalid email',
-                  onSaved: (value) => _email = value ?? '',
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  _isLogin ? 'Login' : 'Register',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
                 ),
-              TextFormField(
-                key: const ValueKey('username'),
-                decoration: const InputDecoration(labelText: 'Username'),
-                validator: (value) =>
-                value != null && value.length >= 3 ? null : 'Username too short',
-                onSaved: (value) => _username = value ?? '',
-              ),
-              TextFormField(
-                key: const ValueKey('password'),
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) =>
-                value != null && value.length >= 6 ? null : 'Password too short',
-                onSaved: (value) => _password = value ?? '',
-              ),
-              const SizedBox(height: 20),
-              if (authProvider.isLoading)
-                const CircularProgressIndicator()
-              else
-                ElevatedButton(
-                  onPressed: () => _submit(authProvider),
-                  child: Text(authProvider.isLogin ? 'Login' : 'Register'),
+                const SizedBox(height: 32),
+                if (_isLogin)
+                  TextFormField(
+                    controller: _userIdController,
+                    decoration: const InputDecoration(
+                      labelText: 'User ID',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your user ID';
+                      }
+                      if (int.tryParse(value) == null) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
+                    },
+                  )
+                else ...[
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a username';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+                const SizedBox(height: 24),
+                Consumer<AuthProvider>(
+                  builder: (context, auth, _) {
+                    return ElevatedButton(
+                      onPressed: auth.isLoading ? null : _submit,
+                      child: auth.isLoading
+                          ? const CircularProgressIndicator()
+                          : Text(_isLogin ? 'Login' : 'Register'),
+                    );
+                  },
                 ),
-              TextButton(
-                onPressed: authProvider.toggleFormMode,
-                child: Text(authProvider.isLogin
-                    ? 'Don\'t have an account? Register'
-                    : 'Already have an account? Login'),
-              )
-            ],
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLogin = !_isLogin;
+                    });
+                  },
+                  child: Text(_isLogin
+                      ? 'Don\'t have an account? Register'
+                      : 'Already have an account? Login'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
+} 
