@@ -10,7 +10,7 @@ import java.util.List;
 @RequestMapping("/api")
 
 public class EventRegistrationController {
-    private EventRegistrationService eventRegistrationService;
+    private final EventRegistrationService eventRegistrationService;
     public EventRegistrationController(EventRegistrationService eventRegistrationService){
         this.eventRegistrationService = eventRegistrationService;
     }

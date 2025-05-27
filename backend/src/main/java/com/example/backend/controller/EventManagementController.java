@@ -2,6 +2,8 @@ package com.example.backend.controller;
 
 import com.example.backend.model.Event;
 import com.example.backend.service.EventService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class EventManagementController {
-    private EventService eventService;
+    private final EventService eventService;
     public EventManagementController(EventService eventService){
         this.eventService = eventService;
     }
@@ -19,15 +21,20 @@ public class EventManagementController {
         return eventService.getAllEvents();
     }
     @GetMapping("/events/{id}")
-    public Event getEventById(@PathVariable Long id){
-        return eventService.getEventById(id);
+    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+        return eventService.getEventById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
+
     @PostMapping("/events")
-    public void createEvent(@RequestBody Event event){
-        eventService.saveEvent(event);
+    public ResponseEntity<Event> createEvent(@RequestBody Event event){
+        Event created = eventService.saveEvent(event);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
     @DeleteMapping("/events/{id}")
-    public void delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.deleteEventById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class EventRegistrationService {
-    private EventRegistrationRepository eventRegistrationRepository;
+    private final EventRegistrationRepository eventRegistrationRepository;
 
     public EventRegistrationService(EventRegistrationRepository eventRegistrationRepository){
         this.eventRegistrationRepository = eventRegistrationRepository;

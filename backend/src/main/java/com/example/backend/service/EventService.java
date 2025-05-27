@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventService {
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
     public EventService(EventRepository eventRepository){
         this.eventRepository = eventRepository;
@@ -22,8 +23,8 @@ public class EventService {
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
-    public Event getEventById(Long id) {
-        return eventRepository.findById(id).orElse(null);
+    public Optional<Event> getEventById(Long id) {
+        return eventRepository.findById(id);
     }
 
     public void deleteEventById(Long id) {
